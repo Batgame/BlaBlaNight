@@ -1,3 +1,15 @@
+<?php
+
+try {
+  $bdd = new PDO("mysql:host=192.168.1.35;dbname=".SQL_DTBS.";charset=utf8", SQL_USER, SQL_PASS);
+  $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
+}
+catch (PDOException $e){
+  echo $e->getMessage();
+}
+
+?>
+
 <!doctype html>
 <html lang="fr">
   <head>
@@ -6,6 +18,7 @@
     <meta name="description" content="">
     <title>BlaBlaNight - Home</title>
     <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/heroes/">
+    <link rel="stylesheet" type="text/css" href="css/trajets.css">
 
     
 
@@ -52,6 +65,7 @@
     <!-- Custom styles for this template -->
     <link href="https://getbootstrap.com/docs/5.0/examples/heroes/heroes.css" rel="stylesheet">
   </head>
+  
   <body>
   	<div class="container">
 		<header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
@@ -61,46 +75,61 @@
 			</a>
 
 			<ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-				<li><a href="index.html" class="nav-link px-2 link-secondary">Accueil</a></li>
-				<li><a href="trajets.html" class="nav-link px-2 link-dark">Trajets</a></li>
+				<li><a href="index.html" class="nav-link px-2 link-dark">Accueil</a></li>
+				<li><a href="trajets.html" class="nav-link px-2 link-secondary">Trajets</a></li>
 			</ul>
 
 			<div class="col-md-3 text-end">
-				<button type="button" class="btn btn-primary">S'inscrire</button>
+				<button type="button" class="btn btn-primary">Se connecter</button>
 			</div>
 		</header>
+
+		<h2>Trajets proposés</h2>
+		<section>	
+			<ul id="list-trajets">
+				<li class="box">
+					<div class="trajet">
+						<div class="top">
+							<time>09:30</time>
+							<span>Annecy le Vieux</span>
+							<br />
+							<span style="margin-left: 5%">|</span>
+							<br />
+							<time>09:45</time>
+							<span>Le Bowl, Annecy</span>
+						</div>
+						<div class="bottom">
+							<div class="pp">
+								<img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" style="max-width: 100%; max-height: 100%;">
+							</div>
+							<span id="name">Clément</span>
+						</div>
+					</div>
+				</li>
+				<li class="box">
+					<div class="trajet">
+						<div class="top">
+							<time>23:30</time>
+							<span>Seynod</span>
+							<br />
+							<span style="margin-left: 5%">|</span>
+							<br />
+							<time>00:00</time>
+							<span>Le Bowl, Annecy</span>
+						</div>
+						<div class="bottom">
+							<div class="pp">
+								<img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" style="max-width: 100%; max-height: 100%;">
+							</div>
+							<span id="name">Jeremy</span>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</section>
   	</div>
    
-	<main>
-
-	  <div class="container col-xl-10 col-xxl-8 px-4 py-5">
-	    <div class="row align-items-center g-lg-5 py-5">
-	      <div class="col-lg-7 text-center text-lg-start">
-	        <h1 class="display-4 fw-bold lh-1 mb-3">Bienvenue sur BlaBlaNight™ !</h1><br />
-	        <p class="col-lg-10 fs-4">BlaBlaNight est une application officieuse créée par les membres du BDE Odin pour permettre à ses membres de co-voiturer pour se rendre en soirée. Si tu t'es toujours sentis Sam, cette app est faite pour toi !</p>
-	      </div>
-	      <div class="col-md-10 mx-auto col-lg-5">
-	        <form class="p-4 p-md-5 border rounded-3 bg-light">
-	          <div class="form-floating mb-3">
-	            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-	            <label for="floatingInput">Adresse mail</label>
-	          </div>
-	          <div class="form-floating mb-3">
-	            <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-	            <label for="floatingPassword">Mot de passe</label>
-	          </div>
-	          <div class="checkbox mb-3">
-	            <label>
-	              <input type="checkbox" value="remember-me"> Se souvenir de moi
-	            </label>
-	          </div>
-	          <button class="w-100 btn btn-lg btn-primary" type="submit">Se connecter</button>
-	        </form>
-	      </div>
-	    </div>
-	  </div>
-
-	</main>
+	
 
 
     <script src="/docs/5.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
