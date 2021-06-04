@@ -1,12 +1,19 @@
 <?php
+session_start();
 
 try {
-  $bdd = new PDO("mysql:host=192.168.1.35;dbname=".SQL_DTBS.";charset=utf8", SQL_USER, SQL_PASS);
+  $bdd = new PDO("mysql:host=172.17.0.6;dbname=blablanight;charset=utf8", "php", "couilles");
   $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
 }
 catch (PDOException $e){
   echo $e->getMessage();
 }
+
+$reqRoutes = $bdd->prepare("SELECT r.id, r.userID, r.source, r.sourceDate, r.destination, r.destinationDate, u.name from routes r JOIN users u on r.userID=u.id");
+$reqRoutes->execute();
+
+$routes = $reqRoutes->FetchAll(PDO::FETCH_ASSOC);
+
 
 ?>
 
@@ -75,56 +82,68 @@ catch (PDOException $e){
 			</a>
 
 			<ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-				<li><a href="index.html" class="nav-link px-2 link-dark">Accueil</a></li>
-				<li><a href="trajets.html" class="nav-link px-2 link-secondary">Trajets</a></li>
+				<li><a href="index.php" class="nav-link px-2 link-dark">Accueil</a></li>
+				<li><a href="routes.php" class="nav-link px-2 link-secondary">Trajets</a></li>
 			</ul>
 
-			<div class="col-md-3 text-end">
-				<button type="button" class="btn btn-primary">Se connecter</button>
-			</div>
+			<?php
+
+			if(isset($_SESSION['user']))
+			{
+				echo '
+
+					<div class="col-md-3 text-end">
+						<a href="index.php?action=logout" id="loginButton"><button type="button" class="btn btn-primary" style="background-color:#e02c2c;">Log out</button></a>
+					</div>
+				';
+			} else
+			{
+				echo '
+
+					<div class="col-md-3 text-end">
+						<a href="login.php" id="loginButton"><button type="button" class="btn btn-primary">Connexion</button></a>
+					</div>
+				';
+			}	
+
+			?>
 		</header>
 
-		<h2>Trajets proposés</h2>
+		<h2>Trajets proposés</h2><br />
 		<section>	
 			<ul id="list-trajets">
-				<li class="box">
-					<div class="trajet">
-						<div class="top">
-							<time>09:30</time>
-							<span>Annecy le Vieux</span>
-							<br />
-							<span style="margin-left: 5%">|</span>
-							<br />
-							<time>09:45</time>
-							<span>Le Bowl, Annecy</span>
-						</div>
-						<div class="bottom">
-							<div class="pp">
-								<img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" style="max-width: 100%; max-height: 100%;">
+
+				<?php 
+				foreach($routes as $route)
+				{
+					echo '
+
+						<li class="box">
+							<div class="trajet">
+								<div class="top">
+									<time>'. date("H:i", strtotime($route["sourceDate"])).'</time>
+									<span>'.$route["source"].'</span>
+									<br />
+									<span style="margin-left: 5%">|</span>
+									<br />
+									<time>'. date("H:i", strtotime($route["destinationDate"])).'</time>
+									<span>'.$route["destination"].'</span>
+								</div>
+								<div class="bottom">
+									<div class="pp">
+										<img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" style="max-width: 100%; max-height: 100%;">
+									</div>
+									<span id="name">'.$route["name"].'</span>
+								</div>
 							</div>
-							<span id="name">Clément</span>
-						</div>
-					</div>
-				</li>
-				<li class="box">
-					<div class="trajet">
-						<div class="top">
-							<time>23:30</time>
-							<span>Seynod</span>
-							<br />
-							<span style="margin-left: 5%">|</span>
-							<br />
-							<time>00:00</time>
-							<span>Le Bowl, Annecy</span>
-						</div>
-						<div class="bottom">
-							<div class="pp">
-								<img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" style="max-width: 100%; max-height: 100%;">
-							</div>
-							<span id="name">Jeremy</span>
-						</div>
-					</div>
-				</li>
+						</li>
+					';
+				}
+
+
+				?>
+
+				
 			</ul>
 		</section>
   	</div>

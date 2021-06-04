@@ -71,3 +71,9 @@
 		margin-left: 9%;
 	}
 }
+
+#loginButton
+{
+    text-decoration: none !important;
+    color: white !important;
+}

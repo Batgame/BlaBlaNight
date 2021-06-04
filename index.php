@@ -1,12 +1,20 @@
 <?php
+session_start();
+
+if(isset($_GET["action"]) && $_GET["action"] == "logout"){
+    session_destroy();
+    header("Location: index.php");
+    exit;
+}
 
 try {
-  $bdd = new PDO("mysql:host=192.168.1.35;dbname=".SQL_DTBS.";charset=utf8", SQL_USER, SQL_PASS);
+  $bdd = new PDO("mysql:host=172.17.0.6;dbname=blablanight;charset=utf8", "php", "couilles");
   $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
 }
 catch (PDOException $e){
   echo $e->getMessage();
 }
+
 
 ?>
 
@@ -28,6 +36,7 @@ catch (PDOException $e){
         <link rel="mask-icon" href="/docs/5.0/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3">
         <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon.ico">
         <meta name="theme-color" content="#7952b3">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
         <style>
             .bd-placeholder-img {
             font-size: 1.125rem;
@@ -60,44 +69,87 @@ catch (PDOException $e){
                 <img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo-black.svg" width="50">
                 </a>
                 <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="index.html" class="nav-link px-2 link-secondary">Accueil</a></li>
-                    <li><a href="trajets.html" class="nav-link px-2 link-dark">Trajets</a></li>
+                    <li><a href="index.php" class="nav-link px-2 link-secondary">Accueil</a></li>
+                    <li><a href="routes.php" class="nav-link px-2 link-dark">Trajets</a></li>
                 </ul>
-                <div class="col-md-3 text-end">
-                    <button type="button" class="btn btn-primary">Se connecter</button>
-                </div>
+                <?php
+
+                if(isset($_SESSION['user']))
+                {
+                    echo '
+
+                        <div class="col-md-3 text-end">
+                            <a href="index.php?action=logout" id="loginButton"><button type="button" class="btn btn-primary" style="background-color:#e02c2c;">Log out</button></a>
+                        </div>
+                    ';
+                } else
+                {
+                    echo '
+
+                        <div class="col-md-3 text-end">
+                            <a href="login.php" id="loginButton"><button type="button" class="btn btn-primary">Connexion</button></a>
+                        </div>
+                    ';
+                }   
+
+                ?>
             </header>
         </div>
         <main>
             <div class="container col-xl-10 col-xxl-8 px-4 py-5">
                 <div class="row align-items-center g-lg-5 py-5">
-                    <div class="col-lg-7 text-center text-lg-start">
-                        <h1 class="display-4 fw-bold lh-1 mb-3">Bienvenue sur BlaBlaNight™ !</h1>
-                        <br />
-                        <p class="col-lg-10 fs-4">BlaBlaNight est une application officieuse créée par les membres du BDE Odin pour permettre à ses membres de co-voiturer pour se rendre en soirée. Si tu t'es toujours sentis Sam, cette app est faite pour toi !</p>
-                    </div>
-                    <div class="col-md-10 mx-auto col-lg-5">
-                        <form class="p-4 p-md-5 border rounded-3 bg-light">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="prenom" placeholder="Dupond">
-                                <label for="floatingInput">Prénom</label>
+
+                    <?php
+                    if(!isset($_SESSION['user']))
+                    {
+                        echo '
+
+                            <div class="col-lg-7 text-center text-lg-start">
+                            <h1 class="display-4 fw-bold lh-1 mb-3">Bienvenue sur BlaBlaNight™ !</h1>
+                            <br />
+                            <p class="col-lg-10 fs-4">BlaBlaNight est une application officieuse créée par les membres du BDE Odin pour permettre à ses membres de co-voiturer pour se rendre en soirée. Si tu t\'es toujours sentis Sam, cette app est faite pour toi !</p>
                             </div>
-                            <div class="form-floating mb-3">
-                                <input type="email" class="form-control" id="mail" placeholder="name@example.com">
-                                <label for="floatingInput">Adresse mail</label>
+                            <div class="col-md-10 mx-auto col-lg-5">
+                                <form class="p-4 p-md-5 border rounded-3 bg-light">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="prenom" placeholder="Dupond">
+                                        <label for="floatingInput">Prénom</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="email" class="form-control" id="mail" placeholder="name@example.com">
+                                        <label for="floatingInput">Adresse mail</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="password" class="form-control" id="pass" placeholder="Password">
+                                        <label for="floatingPassword">Mot de passe</label>
+                                    </div>
+                                    <div class="checkbox mb-3">
+                                        <label>
+                                        <input type="checkbox" value="remember-me"> Se souvenir de moi
+                                        </label>
+                                    </div>
+                                    <button class="w-100 btn btn-lg btn-primary" type="submit">S\'inscrire</button>
+                                </form>
                             </div>
-                            <div class="form-floating mb-3">
-                                <input type="password" class="form-control" id="pass" placeholder="Password">
-                                <label for="floatingPassword">Mot de passe</label>
+                        ';
+                    }
+                    else
+                    {
+                        echo '
+
+                           <h2>Profil</h2>
+
+                            <div class="pp">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" width=200>
                             </div>
-                            <div class="checkbox mb-3">
-                                <label>
-                                <input type="checkbox" value="remember-me"> Se souvenir de moi
-                                </label>
-                            </div>
-                            <button class="w-100 btn btn-lg btn-primary" type="submit">S'inscrire</button>
-                        </form>
-                    </div>
+                           <span>Nom : </span>
+                           <span>Adresse mail : </span>
+                           <span>Nombre de trajets : </span>
+                        ';
+                    }
+
+                    ?>
+                    
                 </div>
             </div>
         </main>
