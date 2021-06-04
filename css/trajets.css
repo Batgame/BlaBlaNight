@@ -1,0 +1,73 @@
+*
+{
+	font-family: Graphik, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif
+}
+
+.trajet
+{
+	width: 100%;
+	margin: 0 auto;
+	margin-top: 2%;
+	height: 12rem;
+	border-radius: 16px;
+	padding: 5%;
+	box-shadow: rgb(0 0 0 / 16%) 0px 1pt 4pt, rgb(0 0 0 / 8%) 0px 2pt 8pt;
+	position: relative;
+
+}
+
+.top
+{
+	height: 60%;
+}
+
+.bottom
+{
+	height: 40%
+}
+
+#list-trajets
+{
+	list-style: none;
+	padding-left: 0 !important;
+	font-weight: 500;
+	font-size: 18px;
+}
+
+.box
+{
+	width: 90%;
+	margin: 0 auto;
+
+}
+
+
+.pp
+{
+	width: 55px;
+	height: 55px;
+	bottom: 10%;
+	position: absolute;
+	border-radius: 50%;
+}
+
+#name
+{
+	bottom: 15%;
+	margin-left: 15%;
+	position: absolute;
+}
+
+@media (min-width: 800px)
+{
+	.box
+	{
+		width: 55%;
+		margin: 0 auto;
+	}
+
+	#name
+	{
+		margin-left: 9%;
+	}
+}
