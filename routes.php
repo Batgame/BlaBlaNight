@@ -14,6 +14,28 @@ $reqRoutes->execute();
 
 $routes = $reqRoutes->FetchAll(PDO::FETCH_ASSOC);
 
+if(isset($_POST['postRoute']))
+{
+	if(!empty($_POST['sourceDate']) and !empty($_POST['source']) and !empty($_POST['destination']) and !empty($_POST['duree']))
+	{
+		$sourceDate = htmlspecialchars($_POST['sourceDate']);
+		$source = htmlspecialchars($_POST['source']);
+		$destination = htmlspecialchars($_POST['destination']);
+		$duree = htmlspecialchars($_POST['duree']);
+
+		$sourceDate = str_replace("T", " ", $sourceDate);
+
+		$destinationDate = strtotime($sourceDate . "+" . $duree . " minutes");
+		
+		//var_dump(date("Y-m-d H:i", strtotime($sourceDate)));
+		//var_dump(date("Y-m-d H:i", $destinationDate));
+
+		$insertRoute = $bdd->prepare("INSERT into routes (userID, source, sourceDate, destination, destinationDate) values (?, ?, ?, ?, ?)");
+		$insertRoute->execute(array($_SESSION['userId'], $source, date("Y-m-d H:i", strtotime($sourceDate)), $destination, date("Y-m-d H:i", $destinationDate)));
+
+		header("Refresh:0");
+	}
+}
 
 ?>
 
@@ -27,19 +49,19 @@ $routes = $reqRoutes->FetchAll(PDO::FETCH_ASSOC);
     <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/heroes/">
     <link rel="stylesheet" type="text/css" href="css/trajets.css">
 
-    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <!-- Bootstrap core CSS -->
-<link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+	    <!-- Bootstrap core CSS -->
+	<link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 
-    <!-- Favicons -->
-<link rel="apple-touch-icon" href="/docs/5.0/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
-<link rel="icon" href="/docs/5.0/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
-<link rel="icon" href="/docs/5.0/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
-<link rel="manifest" href="/docs/5.0/assets/img/favicons/manifest.json">
-<link rel="mask-icon" href="/docs/5.0/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3">
-<link rel="icon" href="/docs/5.0/assets/img/favicons/favicon.ico">
-<meta name="theme-color" content="#7952b3">
+	    <!-- Favicons -->
+	<link rel="apple-touch-icon" href="/docs/5.0/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+	<link rel="icon" href="/docs/5.0/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+	<link rel="icon" href="/docs/5.0/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+	<link rel="manifest" href="/docs/5.0/assets/img/favicons/manifest.json">
+	<link rel="mask-icon" href="/docs/5.0/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3">
+	<link rel="icon" href="/docs/5.0/assets/img/favicons/favicon.ico">
+	<meta name="theme-color" content="#7952b3">
 
 
     <style>
@@ -109,8 +131,41 @@ $routes = $reqRoutes->FetchAll(PDO::FETCH_ASSOC);
 			?>
 		</header>
 
-		<h2>Trajets proposés</h2><br />
+		<h1>Trajets proposés</h1><br />
 		<section>	
+
+			<?php
+				if(isset($_SESSION['userId']))
+				{
+					echo '
+						<button class="btn btn-lg btn-outline-success" type="submit" onclick="openForm();">Proposer un trajet</button><br /><br />
+					';
+				}
+
+			?>
+			<form class="row g-2" id="formRoute" style="display: none;" method="POST" action="routes.php">
+
+				<div class="col-12">
+			    	<input type="datetime-local" class="form-control" name="sourceDate" value="<?= date("Y-m-d")."T".date("H:i"); ?>" required>
+			  	</div>
+			  
+			  	<div class="col-md-6">
+			    	<input type="text" class="form-control" name="source" placeholder="Départ" required>
+			  	</div>
+			  	
+			  	<div class="col-md-6">
+			    	<input type="text" class="form-control" name="destination" placeholder="Arrivée" required>
+			  	</div>
+
+			  	<div class="col-md-12">
+			    	<input type="number" class="form-control" name="duree" placeholder="Durée (min)" required>
+			  	</div>
+
+			  	<div class="col-md-12">
+			  		<button class="btn btn-md btn-outline-success" name="postRoute" type="submit">Créer</button>
+			  	</div>
+			</form>
+		
 			<ul id="list-trajets">
 
 				<?php 
@@ -150,7 +205,24 @@ $routes = $reqRoutes->FetchAll(PDO::FETCH_ASSOC);
    
 	
 
+  	<script type="text/javascript">
 
+  		let count = 0;
+
+  		function openForm()
+		{
+			count += 1;
+			if(count % 2 == 0 )
+			{
+				document.getElementById('formRoute').style.display = 'none';
+			}
+			else
+			{
+				document.getElementById('formRoute').style.display = '';
+			}
+			console.log(count);
+		}
+  	</script>
     <script src="/docs/5.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
 
       
