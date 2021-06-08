@@ -17,25 +17,32 @@ $routes = $reqRoutes->FetchAll(PDO::FETCH_ASSOC);
 
 if(isset($_POST['postRoute']))
 {
-	if(!empty($_POST['sourceDate']) and !empty($_POST['source']) and !empty($_POST['destination']) and !empty($_POST['duree']))
+	if(isset($_SESSION['discord']))
 	{
-		$sourceDate = htmlspecialchars($_POST['sourceDate']);
-		$source = htmlspecialchars($_POST['source']);
-		$destination = htmlspecialchars($_POST['destination']);
-		$duree = htmlspecialchars($_POST['duree']);
+		if(!empty($_POST['sourceDate']) and !empty($_POST['source']) and !empty($_POST['destination']) and !empty($_POST['duree']))
+		{
+			$sourceDate = htmlspecialchars($_POST['sourceDate']);
+			$source = htmlspecialchars($_POST['source']);
+			$destination = htmlspecialchars($_POST['destination']);
+			$duree = htmlspecialchars($_POST['duree']);
 
-		$sourceDate = str_replace("T", " ", $sourceDate);
+			$sourceDate = str_replace("T", " ", $sourceDate);
 
-		$destinationDate = strtotime($sourceDate . "+" . $duree . " minutes");
-		
-		//var_dump(date("Y-m-d H:i", strtotime($sourceDate)));
-		//var_dump(date("Y-m-d H:i", $destinationDate));
+			$destinationDate = strtotime($sourceDate . "+" . $duree . " minutes");
+			
+			//var_dump(date("Y-m-d H:i", strtotime($sourceDate)));
+			//var_dump(date("Y-m-d H:i", $destinationDate));
 
-		$insertRoute = $bdd->prepare("INSERT into routes (userID, source, sourceDate, destination, destinationDate) values (?, ?, ?, ?, ?)");
-		$insertRoute->execute(array($_SESSION['userId'], $source, date("Y-m-d H:i", strtotime($sourceDate)), $destination, date("Y-m-d H:i", $destinationDate)));
+			$insertRoute = $bdd->prepare("INSERT into routes (userID, source, sourceDate, destination, destinationDate) values (?, ?, ?, ?, ?)");
+			$insertRoute->execute(array($_SESSION['userId'], $source, date("Y-m-d H:i", strtotime($sourceDate)), $destination, date("Y-m-d H:i", $destinationDate)));
 
-		header("Refresh:0");
+			header("Refresh:0");
+		}
+	} else 
+	{
+		$_POST['erreur'] = "";
 	}
+	
 }
 
 ?>
@@ -55,12 +62,12 @@ if(isset($_POST['postRoute']))
 	<link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 
 	    <!-- Favicons -->
-	<link rel="apple-touch-icon" href="/docs/5.0/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
-	<link rel="icon" href="/docs/5.0/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
-	<link rel="icon" href="/docs/5.0/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
-	<link rel="manifest" href="/docs/5.0/assets/img/favicons/manifest.json">
+	<link rel="apple-touch-icon" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+	<link rel="icon" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+	<link rel="icon" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+	<link rel="manifest" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/manifest.json">
 	<link rel="mask-icon" href="/docs/5.0/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3">
-	<link rel="icon" href="/docs/5.0/assets/img/favicons/favicon.ico">
+	<link rel="icon" href="https://getbootstrap.com/docs/5.0/assets/img/favicons/favicon.ico">
 	<meta name="theme-color" content="#7952b3">
 
 
@@ -99,7 +106,7 @@ if(isset($_POST['postRoute']))
   	<div class="container">
 		<header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
 
-			<a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+			<a href="index.php" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
 				<img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo-black.svg" width="50">
 			</a>
 
@@ -135,6 +142,15 @@ if(isset($_POST['postRoute']))
 		<section>	
 
 			<?php
+				if(isset($_POST['erreur']))
+				{
+					echo '
+						<div class="alert alert-danger" role="alert">
+  							Vous devez renseigner votre pseudo Discord sur votre profil pour créer un trajet.
+						</div>
+					';
+				}
+
 				if(isset($_SESSION['userId']))
 				{
 					echo '
@@ -154,7 +170,7 @@ if(isset($_POST['postRoute']))
 			<form class="row g-2" id="formRoute" style="display: none;" method="POST" action="routes.php">
 
 				<div class="col-12">
-			    	<input type="datetime-local" class="form-control" name="sourceDate" value="<?= date("Y-m-d")."T".date("H:i"); ?>" required>
+			    	<input type="datetime-local" class="form-control" name="sourceDate" value="" title="Date de départ" required>
 			  	</div>
 			  
 			  	<div class="col-md-6">
