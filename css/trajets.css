@@ -10,20 +10,22 @@
 	margin-top: 2%;
 	height: 12rem;
 	border-radius: 16px;
-	padding: 5%;
+	padding: 3% 5% 3% 5%;
 	box-shadow: rgb(0 0 0 / 16%) 0px 1pt 4pt, rgb(0 0 0 / 8%) 0px 2pt 8pt;
-	position: relative;
 
 }
 
 .top
 {
-	height: 60%;
+	height: 70%;
+	margin-bottom: 1%;
 }
 
 .bottom
 {
-	height: 40%
+	height: 30%;
+	position: relative;
+	display: table;
 }
 
 #list-trajets
@@ -44,18 +46,25 @@
 
 .pp
 {
-	width: 55px;
-	height: 55px;
-	bottom: 10%;
-	position: absolute;
-	border-radius: 50%;
+	height: 100%;
+	width: 50px;
+	display: table-cell;
+}
+
+.name
+{
+	height: 100%;
+	display: table-cell;
 }
 
 #name
 {
-	bottom: 15%;
-	margin-left: 15%;
-	position: absolute;
+	vertical-align: sub;
+}
+
+.dateText
+{
+	margin-bottom: 1%;
 }
 
 @media (min-width: 800px)
@@ -66,10 +75,11 @@
 		margin: 0 auto;
 	}
 
+	/*
 	#name
 	{
 		margin-left: 9%;
-	}
+	}*/
 }
 
 #loginButton

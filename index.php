@@ -15,6 +15,18 @@ catch (PDOException $e){
   echo $e->getMessage();
 }
 
+if(isset($_POST['save']))
+{
+    if(isset($_POST['discord']) and !empty($_POST['discord']))
+    {
+        $discord = htmlspecialchars($_POST['discord']);
+        $addDiscord = $bdd->prepare("UPDATE users set discord = ? where id = ?");
+        $addDiscord->execute(array($discord, $_SESSION['userId']));
+
+        $_SESSION['discord'] = $discord;
+        header("Refresh:0");
+    }
+}
 
 ?>
 
@@ -37,6 +49,8 @@ catch (PDOException $e){
         <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon.ico">
         <meta name="theme-color" content="#7952b3">
         <link rel="stylesheet" type="text/css" href="css/index.css">
+        <script src="https://kit.fontawesome.com/d1ae676b0e.js" crossorigin="anonymous"></script>
+
         <style>
             .bd-placeholder-img {
             font-size: 1.125rem;
@@ -79,7 +93,7 @@ catch (PDOException $e){
                     echo '
 
                         <div class="col-md-3 text-end">
-                            <a href="index.php?action=logout" id="loginButton"><button type="button" class="btn btn-primary" style="background-color:#e02c2c;">Log out</button></a>
+                            <a href="index.php?action=logout" id="loginButton"><button type="button" class="btn btn-primary" style="background-color:#e02c2c;"><i style="color: black;" class="fas fa-sign-out-alt"></i></button></a>
                         </div>
                     ';
                 } else
@@ -135,17 +149,45 @@ catch (PDOException $e){
                     }
                     else
                     {
-                        echo '
+                        if(!empty($_SESSION['discord']))
+                        {
+                            echo '
+                                <h2>Profil</h2>
 
-                           <h2>Profil</h2>
+                                <div class="pp">
+                                    <img id="ppImage" src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png">
+                                </div>
+                               <span>Nom : '.$_SESSION["user"].'</span>
+                               <span>Adresse mail : '.$_SESSION["email"].' </span>
+                               <span>Discord : '.$_SESSION["discord"].' </span>
+                            ';
 
-                            <div class="pp">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" width=200>
-                            </div>
-                           <span>Nom : </span>
-                           <span>Adresse mail : </span>
-                           <span>Nombre de trajets : </span>
-                        ';
+                        } 
+                        else
+                        {
+                            echo '
+                                <div class="alert alert-primary" role="alert">
+                                    Ajouter votre pseudo Discord pour pouvoir être contacté par les autres utilisateurs ! 
+                                </div>
+                                <h2>Profil</h2>
+
+                                <div class="pp">
+                                    <img id="ppImage" src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png">
+                                </div>
+                               <span>Nom : '.$_SESSION["user"].'</span>
+                               <span>Adresse mail : '.$_SESSION["email"].' </span>
+                               <span>Discord : </span>
+                               <form method="post" action="index.php">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm" id="discord">
+                                            <input type="text" class="form-control" name="discord" placeholder="Pseudo#Tag">
+                                        </div>
+                                        <button class="bnt btn-primary btn-sm" type="submit" name="save">Save</button>
+                                    </div>
+                                </form>
+                            ';
+                        }
+                        
                     }
 
                     ?>
@@ -155,4 +197,5 @@ catch (PDOException $e){
         </main>
         <script src="/docs/5.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
     </body>
+
 </html>

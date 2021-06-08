@@ -1,5 +1,6 @@
 <?php
 session_start();
+setlocale(LC_TIME, 'fr_FR.UTF-8');
 
 try {
   $bdd = new PDO("mysql:host=172.17.0.6;dbname=blablanight;charset=utf8", "php", "couilles");
@@ -9,7 +10,7 @@ catch (PDOException $e){
   echo $e->getMessage();
 }
 
-$reqRoutes = $bdd->prepare("SELECT r.id, r.userID, r.source, r.sourceDate, r.destination, r.destinationDate, u.name from routes r JOIN users u on r.userID=u.id");
+$reqRoutes = $bdd->prepare("SELECT r.id, r.userID, r.source, r.sourceDate, r.destination, r.destinationDate, u.name, u.discord from routes r JOIN users u on r.userID=u.id where r.sourceDate > sysdate() order by r.sourceDate");
 $reqRoutes->execute();
 
 $routes = $reqRoutes->FetchAll(PDO::FETCH_ASSOC);
@@ -48,8 +49,7 @@ if(isset($_POST['postRoute']))
     <title>BlaBlaNight - Home</title>
     <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/heroes/">
     <link rel="stylesheet" type="text/css" href="css/trajets.css">
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/d1ae676b0e.js" crossorigin="anonymous"></script>
 
 	    <!-- Bootstrap core CSS -->
 	<link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
@@ -115,7 +115,7 @@ if(isset($_POST['postRoute']))
 				echo '
 
 					<div class="col-md-3 text-end">
-						<a href="index.php?action=logout" id="loginButton"><button type="button" class="btn btn-primary" style="background-color:#e02c2c;">Log out</button></a>
+						<a href="index.php?action=logout" id="loginButton"><button type="button" class="btn btn-primary" style="background-color:#e02c2c;"><i style="color: black;" class="fas fa-sign-out-alt"></i></button></a>
 					</div>
 				';
 			} else
@@ -139,6 +139,14 @@ if(isset($_POST['postRoute']))
 				{
 					echo '
 						<button class="btn btn-lg btn-outline-success" type="submit" onclick="openForm();">Proposer un trajet</button><br /><br />
+					';
+				}
+				else
+				{
+					echo '
+						<div class="alert alert-primary" role="alert">
+  							Créez un compte pour proposer un trajet ou contacter un covoitureur !
+						</div>
 					';
 				}
 
@@ -176,19 +184,22 @@ if(isset($_POST['postRoute']))
 						<li class="box">
 							<div class="trajet">
 								<div class="top">
-									<time>'. date("H:i", strtotime($route["sourceDate"])).'</time>
+									<time class="dateText">'. strftime("%a %d/%m", strtotime($route["sourceDate"])).'</time><br />
+									<time>'. strftime("%H:%M", strtotime($route["sourceDate"])).'</time>
 									<span>'.$route["source"].'</span>
 									<br />
 									<span style="margin-left: 5%">|</span>
 									<br />
-									<time>'. date("H:i", strtotime($route["destinationDate"])).'</time>
+									<time>'. strftime("%H:%M", strtotime($route["destinationDate"])).'</time>
 									<span>'.$route["destination"].'</span>
 								</div>
 								<div class="bottom">
 									<div class="pp">
 										<img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" style="max-width: 100%; max-height: 100%;">
 									</div>
-									<span id="name">'.$route["name"].'</span>
+									<div class="name">
+										<span id="name">'.$route["name"] . ($_SESSION["userId"] ? " (" .$route['discord']. ")": "").'</span>									
+									</div>
 								</div>
 							</div>
 						</li>

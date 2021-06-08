@@ -30,7 +30,9 @@ if(isset($_POST['connexion']))
       {
         $_SESSION['user'] = $result['name'];
         $_SESSION['userId'] = $result['id'];
-        header('Location: routes.php');
+        $_SESSION['email'] = $result['mail'];
+        $_SESSION['discord'] = $result['discord'];
+        header('Location: index.php');
       }
       else
       {
