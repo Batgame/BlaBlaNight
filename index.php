@@ -8,7 +8,7 @@ if(isset($_GET["action"]) && $_GET["action"] == "logout"){
 }
 
 try {
-  $bdd = new PDO("mysql:host=172.17.0.6;dbname=blablanight;charset=utf8", "php", "couilles");
+  $bdd = new PDO("mysql:host=172.17.0.6;dbname=blablanight;charset=utf8", "", "");
   $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
 }
 catch (PDOException $e){
